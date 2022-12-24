@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
+import { useFonts } from 'expo-font';
 
 const intialState = {
     login: "",
@@ -11,12 +12,17 @@ export const RegistrationScreen = () => {
     const [keyboardIsShown, setKeyboardIsShown] = useState(false);
     const [state, setState] = useState(intialState);
 
+    const [fontsLoaded] = useFonts({
+        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
+        'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf')
+    })
     const keyboardHide = () => {
         setKeyboardIsShown(false);
         Keyboard.dismiss();
         setState(intialState)
         console.log(state)
     }
+
     return (
         <TouchableWithoutFeedback onPress={() => {
             Keyboard.dismiss()
@@ -88,19 +94,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 19,
         textAlign: 'right',
-        color: '#1B4371'
+        color: '#1B4371',
+        fontFamily: 'Roboto-Regular',
     },
     loginText: {
         fontSize: 16,
         lineHeight: 19,
         textAlign: 'center',
         color: '#1B4371',
+        fontFamily: 'Roboto-Regular',
     },
     registerText: {
         fontSize: 16,
         lineHeight: 19,
         textAlign: 'center',
         color: '#FFFFFF',
+        fontFamily: 'Roboto-Regular',
     },
     button: {
         marginBottom: 16,
@@ -114,17 +123,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF6C00',
         borderRadius: 100,
         alignItems: 'center',
+        fontFamily: 'Roboto-Regular',
+    },
+        imgBox: {
+        position: 'relative',
+        textAlign: 'center',
+        alignItems: 'center',
+        zIndex: 5,
     },
     addBtn: {
         position: 'absolute',
         width: 25,
         height: 25,
-    },
-    imgBox: {
-        position: 'relative',
-        textAlign: 'center',
-        alignItems: 'center',
-        zIndex: 5,
+        top: 200,
     },
     form: {
         flex: 1,
@@ -133,7 +144,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginTop: 263,
         height: 549,
-        borderRadius: 25,
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
         paddingTop: 92,
         paddingLeft: 16,
         paddingRight: 16,
@@ -150,6 +162,7 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
+        fontFamily: 'Roboto-Regular',
         backgroundColor: '#F6F6F6',
         borderType: 'solid',
         borderRadius: 8,
@@ -159,11 +172,11 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         fontSize: 16,
         color: '#212121',
-        textDecoration: 'none',
     },
     title: {
         fontSize: 30,
         textAlign: 'center',
         marginBottom: 33,
+        fontFamily: 'Roboto-Medium',
     },
 });
