@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 const intialState = {
     login: "",
@@ -12,10 +13,21 @@ export const RegistrationScreen = () => {
     const [keyboardIsShown, setKeyboardIsShown] = useState(false);
     const [state, setState] = useState(intialState);
 
-    const [fontsLoaded] = useFonts({
+        const [fontsLoaded] = useFonts({
         'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
         'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf')
     })
+
+    const onFontsLoaded = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+    }, [fontsLoaded]);
+    
+      if (!fontsLoaded) {
+    return null;
+    }
+    
     const keyboardHide = () => {
         setKeyboardIsShown(false);
         Keyboard.dismiss();
