@@ -1,20 +1,31 @@
-import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    ImageBackground,
+    Image,
+    Keyboard,
+    TouchableOpacity,
+    TouchableWithoutFeedback
+} from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
 const intialState = {
+    login: "",
     email: "",
     password: "",
 }
 
-export const LoginScreen = () => {
+export const RegistrationScreen = ({ navigation }) => {
     const [keyboardIsShown, setKeyboardIsShown] = useState(false);
     const [state, setState] = useState(intialState);
 
-    const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-        'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf')
+        const [fontsLoaded] = useFonts({
+        'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+        'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
     })
 
     const onFontsLoaded = useCallback(async () => {
@@ -25,7 +36,7 @@ export const LoginScreen = () => {
     
       if (!fontsLoaded) {
     return null;
-  }
+    }
     
     const keyboardHide = () => {
         setKeyboardIsShown(false);
@@ -38,10 +49,20 @@ export const LoginScreen = () => {
         <TouchableWithoutFeedback onPress={() => {
             Keyboard.dismiss()
         }}>
-        <View onLayout={onFontsLoaded}>
-            <ImageBackground style={styles.image} source={require('../images/background.jpg')}>
+        <View>
+            <ImageBackground style={styles.image} source={require('../../images/background.jpg')}>
+                <View style={styles.imgBox}>
+                    <Image source={require('../../images/avatar.jpg')} style={styles.registerImg}></Image>
+                </View>
+                
                 <View style={styles.form}>
-                    <Text style={styles.title}>Log In</Text>
+                    <Text style={styles.title}>Registration</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder='Login'
+                            value={state.login}
+                            onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}>
+                        </TextInput>
                         <TextInput
                             style={styles.input}
                             placeholder='Email'
@@ -67,15 +88,19 @@ export const LoginScreen = () => {
                             activeOpacity={0.8}
                             onPress={keyboardHide}>
                             <Text
-                                style={styles.registerText}>
-                                Log in
+                                style={styles.registerText}
+                                onPress={() => navigation.navigate('Posts')}>
+                                Register
                             </Text>
                         </TouchableOpacity>
-                        <Text style={styles.loginText}>Don't have an account? Register here</Text>
+                        <Text style={styles.loginText} >Already have an account?
+                            <Text onPress={() => navigation.navigate('Login')}> Log in here</Text>
+                        </Text>
                 </View>
                 
             </ImageBackground>
-         
+
+            
             </View>
         </TouchableWithoutFeedback>
     )
@@ -123,16 +148,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         fontFamily: 'Roboto-Regular',
     },
-    addBtn: {
-        position: 'absolute',
-        width: 25,
-        height: 25,
-    },
-    imgBox: {
+        imgBox: {
         position: 'relative',
         textAlign: 'center',
         alignItems: 'center',
         zIndex: 5,
+    },
+    addBtn: {
+        position: 'absolute',
+        width: 25,
+        height: 25,
+        top: 200,
     },
     form: {
         flex: 1,
@@ -143,7 +169,7 @@ const styles = StyleSheet.create({
         height: 549,
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        paddingTop: 32,
+        paddingTop: 92,
         paddingLeft: 16,
         paddingRight: 16,
     },

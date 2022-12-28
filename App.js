@@ -1,21 +1,12 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native';
-import { RegistrationScreen } from './screens/RegistartionScreen';
-// import { LoginScreen } from './screens/LoginScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { useRoutePath } from './router';
 
 export const App = () => {
+  const routing = useRoutePath(true)
   return (
-    <View style={styles.container}>
-      <RegistrationScreen />
-      {/* <LoginScreen/> */}
-    </View>
+    <NavigationContainer>
+      {routing}
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

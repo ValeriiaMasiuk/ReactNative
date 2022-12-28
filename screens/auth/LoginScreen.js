@@ -1,21 +1,29 @@
-import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    ImageBackground,
+    Keyboard,
+    TouchableOpacity,
+    TouchableWithoutFeedback
+} from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
 const intialState = {
-    login: "",
     email: "",
     password: "",
 }
 
-export const RegistrationScreen = () => {
+export const LoginScreen = ({navigation}) => {
     const [keyboardIsShown, setKeyboardIsShown] = useState(false);
     const [state, setState] = useState(intialState);
 
-        const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-        'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf')
+    const [fontsLoaded] = useFonts({
+        'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+        'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
     })
 
     const onFontsLoaded = useCallback(async () => {
@@ -26,7 +34,7 @@ export const RegistrationScreen = () => {
     
       if (!fontsLoaded) {
     return null;
-    }
+  }
     
     const keyboardHide = () => {
         setKeyboardIsShown(false);
@@ -39,22 +47,10 @@ export const RegistrationScreen = () => {
         <TouchableWithoutFeedback onPress={() => {
             Keyboard.dismiss()
         }}>
-        <View>
-            <ImageBackground style={styles.image} source={require('../images/background.jpg')}>
-                <View style={styles.imgBox}>
-                    <Image source={require('../images/avatar.jpg')} style={styles.registerImg}></Image>
-
-                    <Image source={require('../images/add.svg')} style={styles.addBtn}></Image>
-                </View>
-                
+        <View onLayout={onFontsLoaded}>
+            <ImageBackground style={styles.image} source={require('../../images/background.jpg')}>
                 <View style={styles.form}>
-                    <Text style={styles.title}>Registration</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder='Login'
-                            value={state.login}
-                            onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}>
-                        </TextInput>
+                    <Text style={styles.title}>Log In</Text>
                         <TextInput
                             style={styles.input}
                             placeholder='Email'
@@ -80,16 +76,17 @@ export const RegistrationScreen = () => {
                             activeOpacity={0.8}
                             onPress={keyboardHide}>
                             <Text
-                                style={styles.registerText}>
-                                Register
+                                style={styles.registerText} onPress={() => navigation.navigate('Posts')}>
+                                Log in
                             </Text>
                         </TouchableOpacity>
-                        <Text style={styles.loginText}>Already have an account? Log in here</Text>
+                        <Text style={styles.loginText}> Don't have an account?
+                            <Text onPress={() => navigation.navigate('Registration')}> Register here</Text>
+                        </Text>
                 </View>
                 
             </ImageBackground>
-
-            
+         
             </View>
         </TouchableWithoutFeedback>
     )
@@ -137,17 +134,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         fontFamily: 'Roboto-Regular',
     },
-        imgBox: {
-        position: 'relative',
-        textAlign: 'center',
-        alignItems: 'center',
-        zIndex: 5,
-    },
     addBtn: {
         position: 'absolute',
         width: 25,
         height: 25,
-        top: 200,
+    },
+    imgBox: {
+        position: 'relative',
+        textAlign: 'center',
+        alignItems: 'center',
+        zIndex: 5,
     },
     form: {
         flex: 1,
@@ -158,7 +154,7 @@ const styles = StyleSheet.create({
         height: 549,
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        paddingTop: 92,
+        paddingTop: 32,
         paddingLeft: 16,
         paddingRight: 16,
     },
