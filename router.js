@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { RegistrationScreen } from './screens/auth/RegistartionScreen';
 import { LoginScreen } from './screens/auth/LoginScreen';
-import { Home } from './screens/main/Home';
+import { Home } from './screens/secondary/Home';
 import { PostsScreen } from './screens/main/PostsScreen';
 import { ProfileScreen } from './screens/main/ProfileScreen';
 import { CreatePostScreen } from './screens/main/CreatePostsScreen';

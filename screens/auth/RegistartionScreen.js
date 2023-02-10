@@ -42,7 +42,6 @@ export const RegistrationScreen = ({ navigation }) => {
         setKeyboardIsShown(false);
         Keyboard.dismiss();
         setState(intialState)
-        console.log(state)
     }
 
     return (
