@@ -3,36 +3,32 @@ import { View, Text, StyleSheet } from "react-native";
 import MapView, {Marker} from 'react-native-maps';
 
 
-export const MapScreen = () => {
-    const markers = [
-  {
-    latitude: 45.65,
-    longitude: -78.90,
-    title: 'Foo Place',
-    subtitle: '1234 Foo Drive'
-  }
-];
-
-    return (<View style={styles.container}>
-        <MapView style={styles.map}
-            // region={...}
-            annotations={markers}
-        >
-            <Marker coordinate={{
-                latitude: 45.65,
-                longtitude: -78.90
-            }} />
-        </MapView>
+export const MapScreen = (route) => {
+  console.log(route)
+  return (
+    <View style={styles.container}>
+            <MapView
+        style={{ flex: 1 }}
+        initialRegion={{
+          latitude: 37.4220936,
+          longitude: -122.083922,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.006,
+        }}
+      >
+        <Marker
+          coordinate={{
+            latitude: 37.4220936,
+            longitude: -122.083922,
+          }}
+          title="Hello"
+        />
+      </MapView>
     </View>)
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1
-    },
-      map: {
-    width: '100%',
-    height: '100%',
-  },
-
+    }
 })

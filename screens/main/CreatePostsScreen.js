@@ -42,33 +42,32 @@ export const CreatePostScreen = ({navigation}) => {
 
     const takePhoto = async () => {
         const photo = await camera.takePictureAsync();
-        
-        // console.log(location.coords.latitude)
-        // console.log(location.coords.longitude)
         setPhoto(photo.uri)
     }
 
-    const handleTitleChange = (title) => {
-        setTitle(title)
+    const handleTitleChange = (value) => {
+        setTitle(value)
     }
 
-    const handleLocationChange = async () => {
-        const location = await Location.getCurrentPositionAsync()
-        // console.log(location.coords.latitude)
-        // console.log(location.coords.longitude)
-        setPlace(location)
+    const handleLocationChange = (value) => {
+        setPlace(value)
     }
 
     const reset = () => {
         setTitle('')
         setPhoto(null)
-        setPlace('');
+        setPlace('')
     }
 
-    const sendPhoto = () => {
-        console.log(title)
-        console.log(place)
-        navigation.navigate('Home', {photo, title, place})
+    const sendPhoto = async () => {
+        const location = await Location.getCurrentPositionAsync()
+        // setPlace({
+        //     latitude: location.coords.latitude,
+        //     longitude: location.coords.longitude,
+        // });
+        console.log(location.coords.latitude)
+        console.log(location.coords.longitude)
+        navigation.navigate('Home', { photo, title, place })
         reset()
     }
 
@@ -78,7 +77,7 @@ export const CreatePostScreen = ({navigation}) => {
       }}>
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ScrollView>
-                <View>
+                <View onLayout={onFontsLoaded}>
                     <Camera style={styles.camera} ref={setCamera}>
                         <TouchableOpacity style={styles.cameraBtn} onPress={takePhoto}>
                             <Feather name="camera" size={45} color="white" />
@@ -87,21 +86,17 @@ export const CreatePostScreen = ({navigation}) => {
                         {photo && (
                             <View style={styles.smallImg}>
                                 <Image source={{ uri: photo }} style={{ width: 343, height: 200 }} />
-                                <Text style={styles.photoText}>New Photo</Text>
                             </View>
                         )}
-                    
-
                     </Camera>
 
                     <Text style={styles.uploadText}>Please, upload a photo</Text>
                     
-                        <TextInput style={{ ...styles.input, marginBottom: 22 }} value={title} placeholder='Title...' onChangeText={handleTitleChange}></TextInput>
-
-                    <TextInput style={{ ...styles.input, marginBottom: 122 }} placeholder='Place..' onChangeText={handleLocationChange}>
-                        <MaterialCommunityIcons style={{marginRight: 8}} name="map-marker-outline" size={18}/>
-                    </TextInput>
-                    
+                    <TextInput style={{ ...styles.input, marginBottom: 22 }} placeholder='Title...' value={title} onChangeText={handleTitleChange}></TextInput>
+                    <View>
+                    <TextInput style={{ ...styles.input, marginBottom: 122, paddingLeft: 20 }} placeholder='Place..' value={place} onChangeText={handleLocationChange}></TextInput>
+                    <MaterialCommunityIcons style={{...styles.marker, marginRight: 8}} name="map-marker-outline" size={18}/>
+                    </View>
                     <View style={styles.btns}>
                         <TouchableOpacity style={styles.btn} onPress={sendPhoto}>
                             <Text style={styles.btnText}>Publish</Text> 
@@ -119,11 +114,16 @@ export const CreatePostScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
+    marker: {
+        position: "absolute",
+        color: '#BDBDBD',
+        top: 5
+    },
     smallImg: {
         position: "absolute",
         height: 200,
         width: 343,
-        backgroundColor: "black"
+        backgroundColor: "green"
     },
     cameraBtn: {
         top: '30%',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Regular',
         fontSize: 16,
         lineHeight: 19,
-        color: '#BDBDBD',
+        color: '#212121',
         borderBottomColor: '#E8E8E8',
         borderBottomWidth: 1,
         paddingBottom: 10,

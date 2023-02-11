@@ -14,6 +14,9 @@ export const Home = ({ route, navigation }) => {
             setPosts((prevState) => [...prevState, route.params])
         }   
     }, [route.params])
+
+    // console.log(route.params)
+    // console.log(posts)
     
     const [fontsLoaded] = useFonts({
         'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
@@ -36,21 +39,21 @@ export const Home = ({ route, navigation }) => {
                 <FlatList
                     data={posts}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={(item) => (   
-                        <View>
-                            <Image source={{ uri: item.photo }} style={styles.image} />
-                            <Text style={styles.imgTitle}>{item.title}</Text>
+                    renderItem={(item) =>(
+                            <View>
+                                <Image source={{ uri: item.item.photo }} style={styles.image} />
+                                <Text style={styles.imgTitle}>{item.item.title}</Text>
                                 <View style={styles.dataBox}>
                                     <TouchableOpacity style={styles.message} onPress={() => navigation.navigate("Comments")}>
-                                        <Feather name="message-circle" size={18}/>
+                                        <Feather name="message-circle" size={18} />
                                         <Text style={styles.num}>0</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.location} onPress={() => navigation.navigate("Map")}>
-                                        <MaterialCommunityIcons name="map-marker-outline" size={18}/>
-                                    <Text style={styles.place}>{item.place}</Text>
+                                        <MaterialCommunityIcons name="map-marker-outline" size={18} />
+                                    <Text style={styles.place}>{item.item.place}</Text>
                                     </TouchableOpacity>
                                 </View>
-                        </View>)
+                            </View>)
                     } />
             </View>
         </View>
@@ -80,8 +83,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: 300,
         height: "auto",
-        borderWidth: 1,
-        borderColor: "black"
+        // borderWidth: 1,
+        // borderColor: "black"
     },
     num: {
         marginLeft: 9
@@ -101,16 +104,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Medium',
         fontSize: 16,
         lineHeight: 19,
-        color: '#212121',
-        borderWidth: 1,
-        borderColor: "black"
+        color: '#212121'
     },
     image: {
         width: 343,
         height: 200,
         marginBottom: 20,
-        borderWidth: 1,
-        borderColor: "black"
     },
     container: {
         flex: 1,
