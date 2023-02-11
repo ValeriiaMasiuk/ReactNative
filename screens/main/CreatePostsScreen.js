@@ -14,16 +14,6 @@ export const CreatePostScreen = ({navigation}) => {
     const [photo, setPhoto] = useState(null);
     const [title, setTitle] = useState('');
     const [place, setPlace] = useState('');
-
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestBackgroundPermissionsAsync();
-            
-            if (status !== "granted") {
-                setErrorMessage("Permission to access location was denied")
-            }
-        })
-    })
             
     const [fontsLoaded] = useFonts({
         'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
