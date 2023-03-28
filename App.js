@@ -1,14 +1,17 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { useRoutePath } from './router';
+import { Provider} from 'react-redux';
+import { store } from './redux/store';
+import { Main } from './components/Main';
+
+import './firebase/config';
 
 const App = () => {
-  const routing = useRoutePath(true)
   return (
-    <NavigationContainer>
-      {routing}
-    </NavigationContainer>
+    <Provider store={store}>
+      <Main/>
+      </Provider>
   );
 }
 
-export default App
+export default App;
+
 

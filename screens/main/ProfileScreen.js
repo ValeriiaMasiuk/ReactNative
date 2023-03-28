@@ -1,107 +1,94 @@
-import { Text, View, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, ImageBackground, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import { useState } from 'react';
 
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { AntDesign, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
-export const ProfileScreen = ({navigation}) => {
-    const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
-        'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
-    })
+import { useDispatch, useSelector } from 'react-redux';
+import { authSignOutUser } from '../../redux/auth/authOperations';
+import { db } from '../../firebase/config';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 
-    const onFontsLoaded = useCallback(async () => {
-        if (fontsLoaded) {
-            await SplashScreen.hideAsync();
-        }
-    }, [fontsLoaded]);
-    
-    if (!fontsLoaded) {
-        return null;
+export const ProfileScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [userPosts, setUserPosts] = useState([])
+  const { userId, login } = useSelector(state => state.auth);
+  const [fontsLoaded] = useFonts({
+    'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
+  });
+
+  useEffect(() => {
+    getUserPosts()
+  }, [])
+
+  const getUserPosts = async () => {
+    const q = query(
+      collection(db, "posts"),
+      where("userId", "==", `${userId}`)
+    );
+
+    onSnapshot(q, (data) => {
+      setUserPosts(data.docs.map((doc) => ({ ...doc.data() })))
+    });
+  }
+
+  const onFontsLoaded = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
     }
+  }, [fontsLoaded]);
+    
+  if (!fontsLoaded) {
+    return null;
+  }
 
-    return (
-        <View style={styles.container} onLayout={onFontsLoaded}>
-            <ImageBackground style={styles.bgImage} source={require('../../images/background.jpg')}>
-                <View style={styles.profileBox}>
-                <ImageBackground style={styles.avatar} source={require('../../images/avatar.jpg')}>
-                        <AntDesign style={styles.closeIcon} name="closecircleo" size={25} />
-                        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                            <Ionicons style={styles.logoutIcon} name="md-log-in-outline" size={24} color="#BDBDBD" />
-                        </TouchableOpacity>
-                </ImageBackground>
-                    <Text style={styles.profileTitle}>Valeriia Masiuk</Text>
+  const handleSubmit = () => {
+    dispatch(authSignOutUser());
+    navigation.navigate('Registration')
+  }
 
-                            <View style={styles.container} onLayout={onFontsLoaded}>
-            <View style={styles.post}>
-                <Image style={styles.image} source={require('../../images/img1.jpg')}></Image>
-                <Text style={styles.imgTitle}>Forest</Text>
-                <View style={styles.box}>
-                <View style={styles.message}>
-                    <View style={styles.smallBox}>
-                        <Feather name="message-circle" size={18} color="#FF6C00"/>
-                        <Text style={styles.num}>8</Text>
-                    </View>
-                    <View style={styles.smallBox}>
-                        <AntDesign name="like2" size={18} color="#FF6C00" />
-                        <Text style={styles.num}>153</Text>
-                    </View>
-                </View>
-                <Text style={styles.location}>
-                    <MaterialCommunityIcons name="map-marker-outline" size={18}/>
-                    <Text style={styles.place}>Ukraine</Text>
-                </Text>
-                </View>
-            </View>
-        </View>
-                </View>
+  return (
+    <View style={styles.container} onLayout={onFontsLoaded}>
+      <ImageBackground style={styles.bgImage} source={require('../../images/background.jpg')}>
+        <View style={styles.profileBox}>
+          <View>
+            <ImageBackground style={styles.avatar} source={require('../../images/avatar.jpg')}>
+              <AntDesign style={styles.closeIcon} name="closecircleo" size={25} />
+                <TouchableOpacity onPress={handleSubmit}>
+                  <Ionicons style={styles.logoutIcon} name="md-log-in-outline" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
             </ImageBackground>
+            <Text style={styles.profileTitle}>{login}</Text>
+          </View>
+          <View style={styles.post}>
+            <FlatList
+            data={userPosts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={(item) => (
+              <View>
+                <Image source={{ uri: item.item.photo }} style={styles.image} />
+                <Text style={styles.imgTitle}>{item.item.title}</Text>
+              </View>
+              )} />
+          </View>
         </View>
-    )
-
+      </ImageBackground>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
-    smallBox: {
-        flex: 1,
-        flexDirection: 'row',
-    },
     post: {
         marginBottom: 34,
         top: 130,
-    },
-    place: {
-        fontSize: 16,
-        lineHeight: 19,
-        textAlign: 'right',
-        textDecorationLine: 'underline',
-        color: '#212121',
-        fontStyle: 'Roboto-Regular'
-    },
-    location: {
-        color: '#BDBDBD'
-    },
-    box: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        height: 19,
-        alignContent: 'center',
-    },
-    num: {
-        marginLeft: 9,
-    },
-    message: {
-        flex: 1,
-        height: 19,
-        fontSize: 16,
-        lineHeight: 19,
-        color: '#212121',
-        flexDirection: 'row',
     },
     imgTitle: {
         marginBottom: 11,
@@ -113,7 +100,8 @@ const styles = StyleSheet.create({
     },
     image: {
         width: 343,
-        marginBottom: 8,
+      marginBottom: 8,
+      height: 200,
     },
     profileTitle: {
         fontStyle: 'Roboto-Medium',
@@ -125,7 +113,6 @@ const styles = StyleSheet.create({
     },
     logoutIcon: {
         left: 230,
-        top: 60,
     },
     closeIcon: {
         width: 25,
@@ -161,6 +148,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+      alignItems: 'center',        
     }
 })

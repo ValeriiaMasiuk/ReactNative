@@ -2,62 +2,82 @@ import { Text, View, StyleSheet, Image, FlatList, TouchableOpacity } from 'react
 import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-
+import { db } from "../../firebase/config";
+import {
+  collection,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-export const Home = ({ route, navigation }) => {
-    const [posts, setPosts] = useState([])
+export const Home = ({ navigation }) => {
+  const [post, setPost] = useState([]);
 
-    useEffect(() => {
-        if (route.params) {
-            setPosts((prevState) => [...prevState, route.params])
-        }   
-    }, [route.params])
+  const getAllPosts = async () => {
+    try {
+      const q = query(collection(db, "posts"));
 
-    // console.log(route.params)
-    // console.log(posts)
+      onSnapshot(q, (data) => {
+        setPost([]);
+        data.forEach((doc) => {
+          setPost((prevState) => {
+            const newComments = { ...doc.data(), id: doc.id };
+
+            return [...prevState, newComments];
+          });
+        });
+      });        
+        } catch (error) {
+            console.log('error')
+        }
+  }
+
+  useEffect(() => {
+    getAllPosts()  
+  }, [])
     
-    const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
-        'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
-    })
+  const [fontsLoaded] = useFonts({
+    'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
+  })
 
-    const onFontsLoaded = useCallback(async () => {
+  const onFontsLoaded = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
-    }, [fontsLoaded]);
+  }, [fontsLoaded]);
     
-      if (!fontsLoaded) {
+  if (!fontsLoaded) {
     return null;
-    }
+  }
     
-    return (
-        <View style={styles.container} onLayout={onFontsLoaded}>
-            <View style={styles.post}>
-                <FlatList
-                    data={posts}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={(item) =>(
-                            <View>
-                                <Image source={{ uri: item.item.photo }} style={styles.image} />
-                                <Text style={styles.imgTitle}>{item.item.title}</Text>
-                                <View style={styles.dataBox}>
-                                    <TouchableOpacity style={styles.message} onPress={() => navigation.navigate("Comments")}>
-                                        <Feather name="message-circle" size={18} />
-                                        <Text style={styles.num}>0</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.location} onPress={() => navigation.navigate("Map")}>
-                                        <MaterialCommunityIcons name="map-marker-outline" size={18} />
-                                    <Text style={styles.place}>{item.item.place}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>)
-                    } />
-            </View>
-        </View>
-    )
+  return (
+    <View style={styles.container} onLayout={onFontsLoaded}>
+      <View style={styles.post}>
+        <FlatList
+          data={post}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={(item) =>(
+            <View>
+              <Image source={{ uri: item.item.photo }} style={styles.image} />
+              <Text style={styles.imgTitle}>{item.item.title}</Text>
+              <Text style={styles.imgTitle}>{item.item.comment}</Text>
+              <View style={styles.dataBox}>
+                <TouchableOpacity style={styles.message} onPress={() => navigation.navigate("Comments", item)}>
+                  <Feather name="message-circle" size={18} />
+                  <Text style={styles.num}>0</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.location} onPress={() => navigation.navigate("Map", item)}>
+                  <MaterialCommunityIcons name="map-marker-outline" size={18} />
+                  <Text style={styles.place}>{item.item.place}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>)
+        } />
+      </View>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -83,8 +103,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: 300,
         height: "auto",
-        // borderWidth: 1,
-        // borderColor: "black"
     },
     num: {
         marginLeft: 9

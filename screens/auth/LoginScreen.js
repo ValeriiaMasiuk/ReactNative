@@ -1,95 +1,93 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    ImageBackground,
-    Keyboard,
-    TouchableOpacity,
-    TouchableWithoutFeedback
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ImageBackground,
+  Keyboard,
+  TouchableOpacity,
+  TouchableWithoutFeedback
 } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { useDispatch } from 'react-redux';
+import { authSignInUser } from '../../redux/auth/authOperations';
 
 const intialState = {
-    email: "",
-    password: "",
+  email: "",
+  password: "",
 }
 
 export const LoginScreen = ({navigation}) => {
-    const [keyboardIsShown, setKeyboardIsShown] = useState(false);
-    const [state, setState] = useState(intialState);
+  const [keyboardIsShown, setKeyboardIsShown] = useState(false);
+  const [state, setState] = useState(intialState);
+  const dispatch = useDispatch();
 
-    const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
-        'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
-    })
+  const [fontsLoaded] = useFonts({
+    'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf')
+  })
 
-    const onFontsLoaded = useCallback(async () => {
+  const onFontsLoaded = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
-    }, [fontsLoaded]);
+  }, [fontsLoaded]);
     
-      if (!fontsLoaded) {
+  if (!fontsLoaded) {
     return null;
   }
     
-    const keyboardHide = () => {
-        setKeyboardIsShown(false);
-        Keyboard.dismiss();
-        setState(intialState)
-        console.log(state)
-    }
+  const handleSubmit = () => {
+    setKeyboardIsShown(false);
+    Keyboard.dismiss();
+    dispatch(authSignInUser(state))
+    setState(intialState);
+    navigation.navigate('Posts')
+  }
 
-    return (
-        <TouchableWithoutFeedback onPress={() => {
-            Keyboard.dismiss()
-        }}>
-        <View onLayout={onFontsLoaded}>
-            <ImageBackground style={styles.image} source={require('../../images/background.jpg')}>
-                <View style={styles.form}>
-                    <Text style={styles.title}>Log In</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder='Email'
-                            value={state.email}
-                            onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}>
-                        </TextInput>
+  return (
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss()
+    }}>
+      <View onLayout={onFontsLoaded}>
+        <ImageBackground style={styles.image} source={require('../../images/background.jpg')}>
+          <View style={styles.form}>
+            <Text style={styles.title}>Log In</Text>
+            <TextInput
+              style={styles.input}
+              placeholder='Email'
+              value={state.email}
+              onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}>
+            </TextInput>
                         
-                        <View style={styles.passwordBox}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder='Password'
-                                secureTextEntry={true}
-                                value={state.password}
-                                onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}>
-                            </TextInput>
-                                <TouchableOpacity>
-                                <Text
-                                    style={styles.showPass}>Show</Text>
-                                </TouchableOpacity>
-                        </View>
-                        <TouchableOpacity
-                            style={styles.button}
-                            activeOpacity={0.8}
-                            onPress={keyboardHide}>
-                            <Text
-                                style={styles.registerText} onPress={() => navigation.navigate('Posts')}>
-                                Log in
-                            </Text>
-                        </TouchableOpacity>
-                        <Text style={styles.loginText}> Don't have an account?
-                            <Text onPress={() => navigation.navigate('Registration')}> Register here</Text>
-                        </Text>
-                </View>
-                
-            </ImageBackground>
-         
+            <View style={styles.passwordBox}>
+              <TextInput
+                style={styles.input}
+                placeholder='Password'
+                secureTextEntry={true}
+                value={state.password}
+                onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}>
+              </TextInput>
+              <TouchableOpacity>
+                <Text style={styles.showPass}>Show</Text>
+              </TouchableOpacity>
             </View>
-        </TouchableWithoutFeedback>
-    )
+            <TouchableOpacity
+              style={styles.button}
+              activeOpacity={0.8}
+              onPress={handleSubmit}>
+              <Text style={styles.registerText}> Log in </Text>
+            </TouchableOpacity>
+              <Text style={styles.loginText}> Don't have an account?
+                <Text onPress={() => navigation.navigate('Registration')}> Register here</Text>
+              </Text>
+          </View>        
+        </ImageBackground>   
+      </View>
+    </TouchableWithoutFeedback>
+  )
 }
 
 const styles = StyleSheet.create({
